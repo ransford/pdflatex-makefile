@@ -1,5 +1,6 @@
 ### generic GNU make Makefile for .tex -> .pdf.
 ### ransford at cs.umass.edu
+### http://github.com/ransford/pdflatex-makefile
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
 ## Makefile to turn mypaper.tex into mypaper.pdf
