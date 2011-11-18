@@ -30,7 +30,7 @@ TARGET ?= report
 ## dependencies to the $(TARGET).pdf target.
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
-		$(shell grep '\\bibliography{' $(TARGET).tex | \
+		$(shell grep '^[^%]*\\bibliography{' $(TARGET).tex | \
 			sed -e 's/^\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
@@ -39,7 +39,7 @@ BIBFILES = $(patsubst %,%.bib,\
 ## files will be added as dependencies to the $(TARGET).pdf target.
 ## Effect: updating an \input'ed .tex file will trigger re-typesetting.
 INCLUDEDTEX = $(patsubst %,%.tex,\
-		$(shell grep '\\input{' $(TARGET).tex | \
+		$(shell grep '^[^%]*\\input{' $(TARGET).tex | \
 			sed -e 's/^\\input{\([^}]*\)}.*/\1/'))
 
 # .PHONY names all targets that aren't filenames
