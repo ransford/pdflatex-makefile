@@ -1,0 +1,2 @@
+TARGET=example
+include ../Makefile
