@@ -63,9 +63,7 @@ view: $(TARGET).pdf
 %.bbl: %.aux $(BIBFILES)
 	$(BIBTEX) $*
 
-$(TARGET).tex: $(INCLUDEDTEX)
-
-%.pdf: %.tex %.bbl
+%.pdf: %.tex %.bbl $(INCLUDEDTEX)
 	$(PDFLATEX) $*
 ifneq ($(strip $(BIBFILES)),)
 	@if grep -q "undefined references" $*.log; then \
