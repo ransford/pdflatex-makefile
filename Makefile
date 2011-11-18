@@ -19,8 +19,8 @@ BIBFILES = $(patsubst %,%.bib,\
 ## files will be added as dependencies to the $(TARGET).pdf target.
 ## Effect: updating an \input'ed .tex file will trigger re-typesetting.
 INCLUDEDTEX = $(patsubst %,%.tex,\
-  $(shell grep '\\input{' $(TARGET).tex | \
-          sed -e 's/^.*\\input{//' -e 's/}//'))
+		$(shell grep '\\input{' $(TARGET).tex | \
+			sed -e 's/^\\input{\([^}]*\)}.*/\1/'))
 
 PDFLATEX = pdflatex
 BIBTEX = bibtex
