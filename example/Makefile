@@ -1,2 +1,2 @@
 TARGET=example
-include ../Makefile
+include ../Makefile.include
