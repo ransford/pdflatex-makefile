@@ -47,6 +47,30 @@ INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\input{' $(TARGET).tex | \
 			sed -e 's/^[^%]*\\input{\([^}]*\)}.*/\1/'))
 
+## grab a version number from the repository (if any) that stores this.
+## * REVISION is the current revision number (short form, for inclusion in text)
+## * VCSTURD is a file that gets touched after a repo update
+ifeq ($(shell git status >&/dev/null && echo USING_GIT),USING_GIT)
+  ifeq ($(shell git svn info >&/dev/null && echo USING_GIT_SVN),USING_GIT_SVN)
+    # git-svn
+    REVISION := $(shell git svn find-rev git-svn)
+    VCSTURD := $(shell git rev-parse --show-toplevel)/.git/refs/remotes/git-svn
+  else
+    # plain git
+    REVISION := $(shell git rev-parse --short HEAD)
+    GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
+    VCSTURD := $(shell git rev-parse --show-toplevel)/.git/$(GIT_BRANCH)
+  endif
+else ifeq ($(shell hg root >&/dev/null && echo USING_HG),USING_HG)
+  # mercurial
+  REVISION := $(shell hg id -i)
+  VCSTURD := $(shell hg root)/.hg/dirstate
+else ifneq ($(wildcard .svn/entries),)
+  # subversion
+  REVISION := $(shell svnversion -n)
+  VCSTURD := .svn/entries
+endif
+
 # .PHONY names all targets that aren't filenames
 .PHONY: all clean pdf view
 
@@ -61,14 +85,28 @@ pdf: $(TARGET).pdf
 view: $(TARGET).pdf
 	$(PDFVIEWER) $(TARGET).pdf
 
+# define a \Revision{} command you can include in your document's preamble.
+# especially useful with e.g. drafthead.sty or fancyhdr.
+# usage: \input{revision}
+#        ... \Revision{}
+ifneq ($(REVISION),)
+REVDEPS += revision.tex
+revision.tex: $(VCSTURD)
+  ifeq ($(OS),Darwin)
+	echo "\\\\newcommand{\\\\Revision}{$(REVISION)}" > $@
+  else
+	echo "\\newcommand{\\Revision}{$(REVISION)}" > $@
+  endif
+endif
+
 # to generate aux but not pdf from pdflatex, use -draftmode
-%.aux: %.tex
+%.aux: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $*
 
 %.bbl: %.aux $(BIBFILES)
 	$(BIBTEX) $*
 
-%.pdf: %.tex %.bbl $(INCLUDEDTEX)
+$(TARGET).pdf: %.pdf: %.tex %.bbl $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $*
 ifneq ($(strip $(BIBFILES)),)
 	@if grep -q "undefined references" $*.log; then \
