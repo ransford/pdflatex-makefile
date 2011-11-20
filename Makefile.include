@@ -19,7 +19,12 @@ PDFLATEX	?= pdflatex
 BIBTEX		?= bibtex
 
 ## Action for 'make view'.  'open -a Preview' works on Mac OS X.
+OS=$(shell uname -s)
+ifeq ($(OS),Darwin)
 PDFVIEWER	?= open -a Preview
+else
+PDFVIEWER	?= evince
+endif
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
 ## Makefile to turn mypaper.tex into mypaper.pdf.
