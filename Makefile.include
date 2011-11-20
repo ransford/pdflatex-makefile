@@ -76,10 +76,6 @@ endif
 
 all: pdf
 
-clean:
-	$(RM) $(TARGET).aux $(TARGET).log $(TARGET).out \
-		$(TARGET).pdf $(TARGET).blg $(TARGET).bbl
-
 pdf: $(TARGET).pdf
 
 view: $(TARGET).pdf
@@ -114,3 +110,8 @@ ifneq ($(strip $(BIBFILES)),)
 endif
 	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $*; done
+
+clean:
+	$(RM) $(TARGET).aux $(TARGET).log $(TARGET).out \
+		$(TARGET).pdf $(TARGET).blg $(TARGET).bbl \
+		$(REVDEPS)
