@@ -31,7 +31,7 @@ TARGET ?= report
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
 		$(shell grep '^[^%]*\\bibliography{' $(TARGET).tex | \
-			sed -e 's/^\\bibliography{\([^}]*\)}.*/\1/' \
+			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
 ## If $(TARGET).tex refers to other .tex files like \input{foo} and
@@ -40,7 +40,7 @@ BIBFILES = $(patsubst %,%.bib,\
 ## Effect: updating an \input'ed .tex file will trigger re-typesetting.
 INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\input{' $(TARGET).tex | \
-			sed -e 's/^\\input{\([^}]*\)}.*/\1/'))
+			sed -e 's/^[^%]*\\input{\([^}]*\)}.*/\1/'))
 
 # .PHONY names all targets that aren't filenames
 .PHONY: all clean pdf view
