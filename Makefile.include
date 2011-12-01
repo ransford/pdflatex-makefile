@@ -118,4 +118,5 @@ endif
 clean:
 	$(RM) $(TARGET).aux $(TARGET).log $(TARGET).out \
 		$(TARGET).pdf $(TARGET).blg $(TARGET).bbl \
+		$(TARGET).lof $(TARGET).lot $(TARGET).toc \
 		$(REVDEPS)
