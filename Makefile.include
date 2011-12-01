@@ -99,10 +99,14 @@ endif
 %.aux: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $*
 
+# introduce BibTeX dependency if we found a \bibliography
+ifneq ($(strip $(BIBFILES)),)
+BIBDEPS = %.bbl
 %.bbl: %.aux $(BIBFILES)
 	$(BIBTEX) $*
+endif
 
-$(TARGET).pdf: %.pdf: %.tex %.bbl $(INCLUDEDTEX) $(REVDEPS)
+$(TARGET).pdf: %.pdf: %.tex $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $*
 ifneq ($(strip $(BIBFILES)),)
 	@if grep -q "undefined references" $*.log; then \
