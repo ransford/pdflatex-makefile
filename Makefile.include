@@ -6,13 +6,17 @@
 ### Recommended usage:
 ###   1. echo 'include Makefile.include' > Makefile
 ###   2. Optional: Edit the Makefile to override $(TARGET)
-###      and anything else (e.g., PDFVIEWER)
+###      and anything else (e.g., PDFVIEWER, AFTERALL)
 ###
 ### Final result:
 ###   % cat Makefile
 ###   TARGET=mypaper
 ###   PDFVIEWER=open -a 'Adobe Acrobat Professional'
+###   AFTERALL=mypostprocessingstep
 ###   include Makefile.include
+###
+###   mypostprocessingstep:
+###           # do something...
 ###
 
 PDFLATEX	?= pdflatex
@@ -75,7 +79,7 @@ endif
 # .PHONY names all targets that aren't filenames
 .PHONY: all clean pdf view
 
-all: pdf
+all: pdf $(AFTERALL)
 
 pdf: $(TARGET).pdf
 
