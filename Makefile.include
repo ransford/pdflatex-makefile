@@ -55,8 +55,8 @@ INCLUDEDTEX = $(patsubst %,%.tex,\
 ## * REVISION is the current revision number (short form, for inclusion in text)
 ## * VCSTURD is a file that gets touched after a repo update
 SPACE = $(empty) $(empty)
-ifeq ($(shell git status >&/dev/null && echo USING_GIT),USING_GIT)
-  ifeq ($(shell git svn info >&/dev/null && echo USING_GIT_SVN),USING_GIT_SVN)
+ifeq ($(shell git status >/dev/null 2>&1 && echo USING_GIT),USING_GIT)
+  ifeq ($(shell git svn info >/dev/null 2>&1 && echo USING_GIT_SVN),USING_GIT_SVN)
     # git-svn
     REVISION := $(shell git svn find-rev git-svn)
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --show-toplevel)/.git/refs/remotes/git-svn)
@@ -66,7 +66,7 @@ ifeq ($(shell git status >&/dev/null && echo USING_GIT),USING_GIT)
     GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --show-toplevel)/.git/$(GIT_BRANCH))
   endif
-else ifeq ($(shell hg root >&/dev/null && echo USING_HG),USING_HG)
+else ifeq ($(shell hg root >/dev/null 2>&1 && echo USING_HG),USING_HG)
   # mercurial
   REVISION := $(shell hg id -i)
   VCSTURD := $(subst $(SPACE),\ ,$(shell hg root)/.hg/dirstate)
