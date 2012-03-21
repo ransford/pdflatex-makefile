@@ -51,6 +51,6 @@ version:
   $ cd pdflatex-makefile
   $ git pull
   $ cd ..
-  $ git commit -m 'updated pdflatex-makefile submodule'
+  $ git commit -m 'updated pdflatex-makefile submodule' pdflatex-makefile
 
 Help on submodules: http://progit.org/book/ch6-6.html
