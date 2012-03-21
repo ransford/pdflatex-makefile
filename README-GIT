@@ -1,0 +1,56 @@
+If your LaTeX document is in a Git repository, you can track
+pdflatex-makefile as a submodule to stay up to date (and avoid having to
+symlink to Makefile.include):
+
+  $ git submodule add \
+      git://github.com/ransford/pdflatex-makefile.git pdflatex-makefile
+
+Your repository will now contain a 'pdflatex-makefile' subdirectory that is
+a pointer to the pdflatex-makefile repository.
+
+  $ git submodule status
+  -3b8720873263445ff168ad077edc14aafb058cc6 pdflatex-makefile
+
+Add and push this pointer to your own repository:
+
+  $ git add .gitmodules
+  $ git add pdflatex-makefile
+  $ git commit -m 'added pdflatex-makefile submodule'
+  $ git push
+
+Then your collaborators can populate the pdflatex-makefile subdirectory on
+their own clones:
+
+  $ git pull
+  $ git submodule init
+  $ git submodule update
+
+Or you can have the Makefile do those steps for them if necessary, by
+insisting that they run a 'make setup' step:
+
+  $ cat Makefile
+  TARGET = mypaper
+
+  # check whether pdflatex-makefile submodule is initialized
+  ifneq ($(wildcard pdflatex-makefile/Makefile.include),)
+    include pdflatex-makefile/Makefile.include
+  else
+  ##### begin submodule-initialization targets
+  .DUMMY: all
+  all:
+          @echo Run 'make setup' and then 'make' again.
+  setup:
+          cd "$(shell git rev-parse --show-toplevel)" && git submodule init \
+                  && git submodule update
+  ##### end submodule action
+  endif
+
+Every once in a while, update your pdflatex-makefile pointer to the latest
+version:
+
+  $ cd pdflatex-makefile
+  $ git pull
+  $ cd ..
+  $ git commit -m 'updated pdflatex-makefile submodule'
+
+Help on submodules: http://progit.org/book/ch6-6.html
