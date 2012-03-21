@@ -33,10 +33,11 @@ endif
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
 ## Makefile to turn mypaper.tex into mypaper.pdf.
 TARGET ?= report
+PDFTARGETS += $(TARGET).pdf
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
-## dependencies to the $(TARGET).pdf target.
+## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
 		$(shell grep '^[^%]*\\bibliography{' $(TARGET).tex | \
@@ -45,7 +46,7 @@ BIBFILES = $(patsubst %,%.bib,\
 
 ## If $(TARGET).tex refers to other .tex files like \input{foo} and
 ## \input{bar}, then $(INCLUDEDTEX) will contain foo.tex and bar.tex, and both
-## files will be added as dependencies to the $(TARGET).pdf target.
+## files will be added as dependencies to $(PDFTARGETS).
 ## Effect: updating an \input'ed .tex file will trigger re-typesetting.
 INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\input{' $(TARGET).tex | \
@@ -81,10 +82,10 @@ endif
 
 all: pdf $(AFTERALL)
 
-pdf: $(TARGET).pdf
+pdf: $(PDFTARGETS)
 
-view: $(TARGET).pdf
-	$(PDFVIEWER) $(TARGET).pdf
+view: $(PDFTARGETS)
+	$(PDFVIEWER) $(PDFTARGETS)
 
 # define a \Revision{} command you can include in your document's preamble.
 # especially useful with e.g. drafthead.sty or fancyhdr.
@@ -111,7 +112,7 @@ BIBDEPS = %.bbl
 	$(BIBTEX) $*
 endif
 
-$(TARGET).pdf: %.pdf: %.tex $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
+$(PDFTARGETS): %.pdf: %.tex $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $*
 ifneq ($(strip $(BIBFILES)),)
 	@if grep -q "undefined references" $*.log; then \
@@ -121,7 +122,8 @@ endif
 		$(PDFLATEX) $*; done
 
 clean:
-	$(RM) $(TARGET).aux $(TARGET).log $(TARGET).out \
-		$(TARGET).pdf $(TARGET).blg $(TARGET).bbl \
-		$(TARGET).lof $(TARGET).lot $(TARGET).toc \
+	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
+		$(T).aux $(T).log $(T).out \
+		$(T).pdf $(T).blg $(T).bbl \
+		$(T).lof $(T).lot $(T).toc) \
 		$(REVDEPS)
