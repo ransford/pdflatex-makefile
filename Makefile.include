@@ -50,7 +50,7 @@ BIBFILES = $(patsubst %,%.bib,\
 ## re-typesetting.
 INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
-			sed 's/[^{]*{\([^}]*\)}/\1/'))
+			sed 's/[^{]*{\([^}]*\)}.*/\1/'))
 
 ## grab a version number from the repository (if any) that stores this.
 ## * REVISION is the current revision number (short form, for inclusion in text)
@@ -121,8 +121,12 @@ endif
 	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $*; done
 
+# remove .aux and .log files created by files in $(INCLUDEDTEX)
+AUXFILES = $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
+LOGFILES = $(patsubst %.tex,%.log, $(INCLUDEDTEX))
+
 clean:
 	$(RM) $(TARGET).aux $(TARGET).log $(TARGET).out \
 		$(TARGET).pdf $(TARGET).blg $(TARGET).bbl \
 		$(TARGET).lof $(TARGET).lot $(TARGET).toc \
-		$(REVDEPS)
+		$(REVDEPS) $(AUXFILES) $(LOGFILES)
