@@ -44,13 +44,10 @@ BIBFILES = $(patsubst %,%.bib,\
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
-## If $(TARGET).tex refers to other .tex files like \input{foo} and
-## \input{bar}, then $(INCLUDEDTEX) will contain foo.tex and bar.tex, and both
-## files will be added as dependencies to $(PDFTARGETS).
-## Effect: updating an \input'ed .tex file will trigger re-typesetting.
+## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies.
 INCLUDEDTEX = $(patsubst %,%.tex,\
-		$(shell grep '^[^%]*\\input{' $(TARGET).tex | \
-			sed -e 's/^[^%]*\\input{\([^}]*\)}.*/\1/'))
+		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
+			sed 's/[^{]*{\([^}]*\)}.*/\1/'))
 
 ## grab a version number from the repository (if any) that stores this.
 ## * REVISION is the current revision number (short form, for inclusion in text)
@@ -121,9 +118,12 @@ endif
 	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $*; done
 
+# remove .aux and .log files created by files in $(INCLUDEDTEX)
+AUXFILES = $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
+LOGFILES = $(patsubst %.tex,%.log, $(INCLUDEDTEX))
+
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
-		$(T).aux $(T).log $(T).out \
-		$(T).pdf $(T).blg $(T).bbl \
+		$(T).out $(T).pdf $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc) \
-		$(REVDEPS)
+		$(REVDEPS) $(AUXFILES) $(LOGFILES)
