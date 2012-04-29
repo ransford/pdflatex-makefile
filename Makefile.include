@@ -119,8 +119,8 @@ endif
 		$(PDFLATEX) $*; done
 
 # remove .aux and .log files created by files in $(INCLUDEDTEX)
-AUXFILES = $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
-LOGFILES = $(patsubst %.tex,%.log, $(INCLUDEDTEX))
+AUXFILES = $(TARGET).aux $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
+LOGFILES = $(TARGET).log $(patsubst %.tex,%.log, $(INCLUDEDTEX))
 
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
