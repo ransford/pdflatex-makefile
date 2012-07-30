@@ -125,5 +125,5 @@ LOGFILES = $(TARGET).log $(patsubst %.tex,%.log, $(INCLUDEDTEX))
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
 		$(T).out $(T).pdf $(T).blg $(T).bbl \
-		$(T).lof $(T).lot $(T).toc) \
+		$(T).lof $(T).lot $(T).toc $(T).idx) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES)
