@@ -27,7 +27,7 @@ OS=$(shell uname -s)
 ifeq ($(OS),Darwin)
 PDFVIEWER	?= open -a Preview
 else
-PDFVIEWER	?= evince
+PDFVIEWER	?= xdg-open
 endif
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
