@@ -27,7 +27,7 @@ OS=$(shell uname -s)
 ifeq ($(OS),Darwin)
 PDFVIEWER	?= open -a Preview
 else
-PDFVIEWER	?= evince
+PDFVIEWER	?= xdg-open
 endif
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
@@ -62,7 +62,7 @@ ifeq ($(shell git status >/dev/null 2>&1 && echo USING_GIT),USING_GIT)
     # plain git
     REVISION := $(shell git rev-parse --short HEAD)
     GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
-    VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --show-toplevel)/.git/$(GIT_BRANCH))
+    VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --show-toplevel)/.git/HEAD)
   endif
 else ifeq ($(shell hg root >/dev/null 2>&1 && echo USING_HG),USING_HG)
   # mercurial
