@@ -22,10 +22,10 @@
 PDFLATEX	?= pdflatex
 BIBTEX		?= bibtex
 
-## Action for 'make view'.  'open -a Preview' works on Mac OS X.
+## Action for 'make view'
 OS=$(shell uname -s)
 ifeq ($(OS),Darwin)
-PDFVIEWER	?= open -a Preview
+PDFVIEWER	?= open
 else
 PDFVIEWER	?= xdg-open
 endif
