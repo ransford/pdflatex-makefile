@@ -49,6 +49,10 @@ INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
 			sed 's/[^{]*{\([^}]*\)}.*/\1/'))
 
+AUXFILES = $(foreach T,$(PDFTARGETS:.pdf=), $(T).aux)
+AUXFILES += $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
+LOGFILES = $(patsubst %.aux,%.log, $(AUXFILES))
+
 ## grab a version number from the repository (if any) that stores this.
 ## * REVISION is the current revision number (short form, for inclusion in text)
 ## * VCSTURD is a file that gets touched after a repo update
@@ -99,6 +103,7 @@ revision.tex: $(VCSTURD)
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
+.INTERMEDIATE: $(AUXFILES)
 %.aux: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $*
 
@@ -117,11 +122,6 @@ ifneq ($(strip $(BIBFILES)),)
 endif
 	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $*; done
-
-# remove .aux and .log files created by files in $(INCLUDEDTEX)
-AUXFILES = $(foreach T,$(PDFTARGETS:.pdf=), $(T).aux)
-AUXFILES += $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
-LOGFILES = $(patsubst %.aux,%.log, $(AUXFILES))
 
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
