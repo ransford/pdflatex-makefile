@@ -128,4 +128,5 @@ clean:
 		$(T).out $(T).pdf $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc $(T).idx \
 		$(T).nav $(T).snm) \
-		$(REVDEPS) $(AUXFILES) $(LOGFILES)
+		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
+		$(EXTRACLEAN)
