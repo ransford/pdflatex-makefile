@@ -1,6 +1,6 @@
 ###
 ### generic GNU make Makefile for .tex -> .pdf.
-### ransford at cs.umass.edu
+### ransford at cs.washington.edu
 ###   http://github.com/ransford/pdflatex-makefile
 ###
 ### Recommended usage:
