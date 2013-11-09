@@ -98,7 +98,7 @@ revision.tex: $(VCSTURD)
   ifeq ($(OS),Darwin)
 	echo "\\\\newcommand{\\\\Revision}{$(REVISION)}" > $@
   else
-	echo "\\\newcommand{\\Revision}{$(REVISION)}" > $@
+	echo "\\newcommand{\\Revision}{$(REVISION)}" > $@
   endif
 endif
 
