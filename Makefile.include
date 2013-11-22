@@ -19,7 +19,15 @@
 ###           # do something...
 ###
 
-PDFLATEX	?= pdflatex
+PDFLATEX	?= pdflatex -halt-on-error -file-line-error
+ifneq ($(QUIET),)
+PDFLATEX	+= -interaction=batchmode
+ERRFILTER	:= || egrep ':[[:digit:]+]:' *.log && false
+else
+PDFLATEX	+= -interaction=nonstopmode
+ERRFILTER=
+endif
+
 BIBTEX		?= bibtex
 
 ## Action for 'make view'
@@ -105,7 +113,7 @@ endif
 # to generate aux but not pdf from pdflatex, use -draftmode
 .INTERMEDIATE: $(AUXFILES)
 %.aux: %.tex $(REVDEPS)
-	$(PDFLATEX) -draftmode $*
+	$(PDFLATEX) -draftmode $* $(ERRFILTER)
 
 # introduce BibTeX dependency if we found a \bibliography
 ifneq ($(strip $(BIBFILES)),)
