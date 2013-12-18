@@ -103,11 +103,7 @@ view: $(PDFTARGETS)
 ifneq ($(REVISION),)
 REVDEPS += revision.tex
 revision.tex: $(VCSTURD)
-  ifeq ($(OS),Darwin)
-	echo "\\\\newcommand{\\\\Revision}{$(REVISION)}" > $@
-  else
-	echo "\\newcommand{\\Revision}{$(REVISION)}" > $@
-  endif
+	/bin/echo '\newcommand{\Revision}'"{$(REVISION)}" > $@
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
