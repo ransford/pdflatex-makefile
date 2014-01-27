@@ -119,13 +119,13 @@ BIBDEPS = %.bbl
 endif
 
 $(PDFTARGETS): %.pdf: %.tex %.aux $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
-	$(PDFLATEX) $*
+	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
 	@if grep -q "undefined references" $*.log; then \
-		$(BIBTEX) $* && $(PDFLATEX) $*; fi
+		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
 	@while grep -q "Rerun to" $*.log; do \
-		$(PDFLATEX) $*; done
+		$(PDFLATEX) $* $(ERRFILTER); done
 
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
