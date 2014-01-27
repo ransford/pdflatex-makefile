@@ -22,7 +22,7 @@
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
-ERRFILTER	:= || egrep ':[[:digit:]+]:' *.log && false
+ERRFILTER	:= || (egrep ':[[:digit:]+]:' *.log && false)
 else
 PDFLATEX	+= -interaction=nonstopmode
 ERRFILTER=
