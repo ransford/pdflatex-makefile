@@ -20,15 +20,16 @@
 ###
 
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error
+BIBTEX		?= bibtex
+
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
 ERRFILTER	:= > /dev/null || (egrep ':[[:digit:]]+:' *.log && false)
+BIBTEX		+= -terse
 else
 PDFLATEX	+= -interaction=nonstopmode
 ERRFILTER=
 endif
-
-BIBTEX		?= bibtex
 
 ## Action for 'make view'
 OS=$(shell uname -s)
