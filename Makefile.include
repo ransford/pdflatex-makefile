@@ -58,9 +58,9 @@ INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
 			sed 's/[^{]*{\([^}]*\)}.*/\1/'))
 
-AUXFILES = $(foreach T,$(PDFTARGETS:.pdf=), $(T).aux)
-AUXFILES += $(patsubst %.tex,%.aux, $(INCLUDEDTEX))
-LOGFILES = $(patsubst %.aux,%.log, $(AUXFILES))
+AUXFILES = $(PDFTARGETS:.pdf=.aux)
+AUXFILES += $(INCLUDEDTEX:.tex=.aux)
+LOGFILES = $(AUXFILES:.aux=.log)
 
 ## grab a version number from the repository (if any) that stores this.
 ## * REVISION is the current revision number (short form, for inclusion in text)
