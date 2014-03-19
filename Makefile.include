@@ -88,7 +88,7 @@ else ifneq ($(wildcard .svn/entries),)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view
+.PHONY: all clean pdf view snapshot
 
 all: pdf $(AFTERALL)
 
@@ -127,6 +127,11 @@ ifneq ($(strip $(BIBFILES)),)
 endif
 	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $* $(ERRFILTER); done
+
+DRAFTS := $(PDFTARGETS:.pdf=-$(REVISION).pdf)
+$(DRAFTS): %-$(REVISION).pdf: %.pdf
+	cp $< $@
+snapshot: $(DRAFTS)
 
 clean:
 	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \

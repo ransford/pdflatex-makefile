@@ -21,3 +21,5 @@ Features:
   command you can use in your LaTeX markup to include a current revision
   identifier.  Useful for circulating drafts for comment.
 * `make view` opens your typeset document.
+* To generate a draft with the revision number in its filename (to pass
+  around), use `make snapshot`.
