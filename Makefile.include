@@ -105,6 +105,7 @@ ifneq ($(REVISION),)
 REVDEPS += revision.tex
 revision.tex: $(VCSTURD)
 	/bin/echo '\newcommand{\Revision}'"{$(REVISION)}" > $@
+AUXFILES += revision.aux
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode

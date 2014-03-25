@@ -1,0 +1,38 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stuff to make special headers and footers for draft environments
+% Usage:
+%       \documentstyle[...,drafthead,...]{...}
+%
+
+\def\@installdraftpagestyles{
+  \def\ps@plain{\@draftstyle}
+  \def\ps@empty{\@draftstyle}
+  \def\ps@headfoot{\@draftstyle}
+  \def\ps@myheadfoot{\@draftstyle}
+  \pagestyle{plain}
+}
+
+\include{revision}
+
+\newcount\timehh\newcount\timemm\newcount\timetmp
+\timehh=\time
+\divide\timehh by 60 \timemm=\time
+\count255=\timehh\multiply\count255 by -60 \advance\timemm by \count255
+\edef\draft@puttime{%
+{\ifnum\timehh<10 0\fi\number\timehh}%
+:{\ifnum\timemm<10 0\fi\number\timemm}}
+
+\def\@draftstyle{
+  \def\@oddhead{\hbox to\textwidth{{\normalsize}}}
+  \def\@oddfoot{\hbox to\textwidth{{\normalsize
+%        \hbox to 0in{\draft@puttime\ \today\hss}
+%        \hfil
+	\hbox to 0in{\fbox{\bf CONFIDENTIAL DRAFT.  \today\ \draft@puttime; rev.\ \Revision.}\hss}
+	\hfil
+	\thepage
+	}}}
+  \def\@evenhead{\@oddhead}
+  \def\@evenfoot{\@oddfoot}
+}
+
+\@installdraftpagestyles

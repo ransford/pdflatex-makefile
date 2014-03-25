@@ -1,4 +1,21 @@
+%%
+%% Example "paper" for pdflatex-makefile.
+%%
+%% The Makefile tries to detect dependencies, so this file includes some true
+%% dependencies (e.g., abstract.tex) and some false dependencies (e.g., the
+%% commented-out introduction.tex [which doesn't exist]).
+%%
+%% Also demonstrates the inclusion of revision.tex via the drafthead package.
+%%
+
+\newcount\draft\draft=1 % set to 0 for "publication"
+
 \documentclass{article}
+
+\ifnum\draft=1
+  % include the revision number in a footer
+  \usepackage{draftfooter}
+\fi
 
 \begin{document}
 
