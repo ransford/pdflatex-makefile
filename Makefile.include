@@ -50,12 +50,14 @@ PDFTARGETS += $(TARGET).pdf
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
 		$(shell grep '^[^%]*\\bibliography{' $(TARGET).tex | \
+			grep -o '\\bibliography{[^}]\+}' | \
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies.
 INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
+			grep -o '\\\(input|include\){[^}]\+}' | \
 			sed 's/[^{]*{\([^}]*\)}.*/\1/'))
 
 AUXFILES = $(PDFTARGETS:.pdf=.aux)
