@@ -41,28 +41,29 @@ endif
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
 ## Makefile to turn mypaper.tex into mypaper.pdf.
-TARGET ?= report
-PDFTARGETS += $(TARGET).pdf
+TARGETS += $(TARGET)
+TEXTARGETS = $(TARGETS:=.tex)
+PDFTARGETS = $(TARGETS:=.pdf)
+AUXFILES   = $(TARGETS:=.aux)
+LOGFILES   = $(TARGETS:=.log)
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
-		$(shell grep '^[^%]*\\bibliography{' $(TARGET).tex | \
+		$(shell grep '^[^%]*\\bibliography{' $(TEXTARGETS) | \
 			grep -o '\\bibliography{[^}]\+}' | \
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies.
 INCLUDEDTEX = $(patsubst %,%.tex,\
-		$(shell grep '^[^%]*\\\(input\|include\){' $(TARGET).tex | \
+		$(shell grep '^[^%]*\\\(input\|include\){' $(TEXTARGETS) | \
 			grep -o '\\\(input\|include\){[^}]\+}' | \
 			sed -e 's/^.*{\([^}]*\)}.*/\1/'))
 
-AUXFILES = $(PDFTARGETS:.pdf=.aux)
 AUXFILES += $(INCLUDEDTEX:.tex=.aux)
-LOGFILES = $(AUXFILES:.aux=.log)
 
 ## grab a version number from the repository (if any) that stores this.
 ## * REVISION is the current revision number (short form, for inclusion in text)
@@ -137,7 +138,7 @@ $(DRAFTS): %-$(REVISION).pdf: %.pdf
 snapshot: $(DRAFTS)
 
 clean:
-	$(RM) $(foreach T,$(PDFTARGETS:.pdf=), \
+	$(RM) $(foreach T,$(TARGETS), \
 		$(T).out $(T).pdf $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc $(T).idx \
 		$(T).nav $(T).snm) \

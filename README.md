@@ -15,6 +15,7 @@ Features:
 
 * Simple to use: just set `TARGET=<yourpaper>` and `include Makefile.include`.
   See the `example/` directory for a usage example.
+* Supports multiple targets: set `TARGETS=paper1 paper2` instead of `TARGET`.
 * Calculates dependencies sanely.  Detects changes to included .tex and .bib
   files and rebuilds when appropriate.
 * Detects your revision control system (svn, git, hg) and defines a `\Revision`
