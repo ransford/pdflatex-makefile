@@ -137,10 +137,17 @@ $(DRAFTS): %-$(REVISION).pdf: %.pdf
 	cp $< $@
 snapshot: $(DRAFTS)
 
+%.distilled.pdf: %.pdf
+	gs -q -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$@ \
+		-dCompatibilityLevel=1.5 -dPDFSETTINGS=/prepress -c .setpdfwrite -f $<
+	exiftool -overwrite_original -Title="" -Creator="" -CreatorTool="" $@
+
+distill: $(PDFTARGETS:.pdf=.distilled.pdf)
+
 clean:
 	$(RM) $(foreach T,$(TARGETS), \
 		$(T).out $(T).pdf $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc $(T).idx \
-		$(T).nav $(T).snm) \
+		$(T).nav $(T).snm $(T).distilled.pdf) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
