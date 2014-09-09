@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Stuff to make special headers and footers for draft environments
 % Usage:
-%       \documentstyle[...,drafthead,...]{...}
+%       \documentstyle[...,draftfooter,...]{...}
 %
 
 \def\@installdraftpagestyles{
@@ -12,7 +12,12 @@
   \pagestyle{plain}
 }
 
-\include{revision}
+\IfFileExists{revision.tex}{
+  \include{revision}
+  \newcommand{\revstr}{; rev.\ \Revision.}
+}{
+  \newcommand{\revstr}{}
+}
 
 \newcount\timehh\newcount\timemm\newcount\timetmp
 \timehh=\time
@@ -27,7 +32,7 @@
   \def\@oddfoot{\hbox to\textwidth{{\normalsize
 %        \hbox to 0in{\draft@puttime\ \today\hss}
 %        \hfil
-	\hbox to 0in{\fbox{\bf CONFIDENTIAL DRAFT.  \today\ \draft@puttime; rev.\ \Revision.}\hss}
+	\hbox to 0in{\fbox{\bf CONFIDENTIAL DRAFT.  \today\ \draft@puttime\revstr}\hss}
 	\hfil
 	\thepage
 	}}}

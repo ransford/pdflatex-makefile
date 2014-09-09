@@ -101,7 +101,7 @@ view: $(PDFTARGETS)
 	$(PDFVIEWER) $(PDFTARGETS)
 
 # define a \Revision{} command you can include in your document's preamble.
-# especially useful with e.g. drafthead.sty or fancyhdr.
+# especially useful with e.g. draftfooter.sty or fancyhdr.
 # usage: \input{revision}
 #        ... \Revision{}
 ifneq ($(REVISION),)
