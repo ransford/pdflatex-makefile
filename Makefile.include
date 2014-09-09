@@ -91,7 +91,7 @@ else ifneq ($(wildcard .svn/entries),)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view snapshot
+.PHONY: all clean pdf view snapshot distill
 
 all: pdf $(AFTERALL)
 
