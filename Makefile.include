@@ -91,7 +91,7 @@ else ifneq ($(wildcard .svn/entries),)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view snapshot distill
+.PHONY: all clean pdf view snapshot distill distclean
 
 all: pdf $(AFTERALL)
 
@@ -144,10 +144,14 @@ snapshot: $(DRAFTS)
 
 distill: $(PDFTARGETS:.pdf=.distilled.pdf)
 
+distclean: clean
+	$(RM) $(PDFTARGETS) $(PDFTARGETS:.pdf=.distilled.pdf) $(EXTRADISTCLEAN)
+
 clean:
 	$(RM) $(foreach T,$(TARGETS), \
-		$(T).out $(T).pdf $(T).blg $(T).bbl \
+		$(T).out $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc $(T).idx \
-		$(T).nav $(T).snm $(T).distilled.pdf) \
+		$(T).nav $(T).snm) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
+
