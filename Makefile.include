@@ -86,7 +86,7 @@ else ifeq ($(shell hg root >/dev/null 2>&1 && echo USING_HG),USING_HG)
   VCSTURD := $(subst $(SPACE),\ ,$(shell hg root)/.hg/dirstate)
 else ifneq ($(wildcard .svn/entries),)
   # subversion
-  REVISION := $(shell svnversion -n)
+  REVISION := $(subst :,-,$(shell svnversion -n))
   VCSTURD := .svn/entries
 endif
 
