@@ -126,7 +126,7 @@ endif
 $(PDFTARGETS): %.pdf: %.tex %.aux $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
-	@if grep -q "undefined references" $*.log; then \
+	@if egrep -q "undefined (references|citations)" $*.log; then \
 		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
 	@while grep -q "Rerun to" $*.log; do \
