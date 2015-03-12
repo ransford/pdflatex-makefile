@@ -57,11 +57,13 @@ BIBFILES = $(patsubst %,%.bib,\
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
-## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies.
+## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies; ignore
+## .tex extensions.
 INCLUDEDTEX = $(patsubst %,%.tex,\
 		$(shell grep '^[^%]*\\\(input\|include\){' $(TEXTARGETS) | \
 			grep -o '\\\(input\|include\){[^}]\+}' | \
-			sed -e 's/^.*{\([^}]*\)}.*/\1/'))
+			sed -e 's/^.*{\([^}]*\)}.*/\1/' \
+			    -e 's/\.tex$$//'))
 
 AUXFILES += $(INCLUDEDTEX:.tex=.aux)
 
