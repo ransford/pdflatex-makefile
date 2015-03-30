@@ -1,0 +1,47 @@
+### Requires the Makefile.include file from
+###   http://github.com/ransford/pdflatex-makefile
+###
+### generic GNU make Makefile for .ipynb -> .tex -> .pdf.
+### charles at charlesledoux.com
+###   https://github.com/cledoux/pdflatex-makefile
+###
+### Recommended usage:
+###   1. echo 'include Makefile-ipython.include' > Makefile
+###   2. Optional: Edit the Makefile to override $(TARGET)
+###      and anything else (e.g., PDFVIEWER, TEMPLATE, AFTERALL)
+###
+### Final result:
+###   % cat Makefile
+###   TARGET=mynotebook
+###   PDFVIEWER=open -a 'Adobe Acrobat Professional'
+###   TEMPLATE=notebook_template.tplx
+###   AFTERALL=mypostprocessingstep
+###   include Makefile-ipython.include
+###
+###   mypostprocessingstep:
+###           # do something...
+###
+NOTEBOOK=$(TARGET).ipynb 
+TEX=$(TARGET).tex
+NBCONVERT_ARGS='--to=latex'
+ifneq ($(TEMPLATE),)
+NBCONVERT_ARGS+=' --template=$(TEMPLATE)'
+endif
+
+PARENT_MAKE=TARGET=$(TARGET) $(MAKE) -f Makefile.include
+
+all: $(TEX)
+	@$(PARENT_MAKE) all
+
+$(TEX): $(NOTEBOOK)
+	ipython nbconvert --to=latex --template=$(TEMPLATE) --profile=mcafee $(NOTEBOOK)
+
+# Look for any rules not found here in the parent.
+%: force
+	@$(PARENT_MAKE) $@
+force: ;
+
+clean: 
+	@$(PARENT_MAKE) clean
+	$(RM) -r $(TARGET)_files
+	$(RM) $(TEX)
