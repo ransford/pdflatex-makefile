@@ -28,20 +28,23 @@ ifneq ($(TEMPLATE),)
 NBCONVERT_ARGS+=' --template=$(TEMPLATE)'
 endif
 
-PARENT_MAKE=TARGET=$(TARGET) $(MAKE) -f Makefile.include
+PDF_MAKE=Makefile.include
+
+# The PDF make needs TARGET set as well
+export TARGET
 
 all: $(TEX)
-	@$(PARENT_MAKE) all
+	$(MAKE) -f $(PDF_MAKE) all
 
 $(TEX): $(NOTEBOOK)
-	ipython nbconvert --to=latex --template=$(TEMPLATE) --profile=mcafee $(NOTEBOOK)
+	ipython nbconvert --to=latex --template=$(TEMPLATE) $(NOTEBOOK)
+
+clean: 
+	$(MAKE) -f $(PDF_MAKE) clean
+	$(RM) -r $(TARGET)_files
+	$(RM) $(TEX)
 
 # Look for any rules not found here in the parent.
 %: force
-	@$(PARENT_MAKE) $@
+	$(MAKE) -f $(PDF_MAKE) $@
 force: ;
-
-clean: 
-	@$(PARENT_MAKE) clean
-	$(RM) -r $(TARGET)_files
-	$(RM) $(TEX)
