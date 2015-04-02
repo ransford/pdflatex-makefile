@@ -45,6 +45,8 @@ clean:
 	$(RM) $(TEX)
 
 # Look for any rules not found here in the parent.
-%: force
+# https://www.gnu.org/software/make/manual/html_node/Overriding-Makefiles.html
+# I removed the force part because this was causing it to attempt to run
+# commands Makefile and Makefile.include
+%: 
 	$(MAKE) -f $(PDF_MAKE) $@
-force: ;
