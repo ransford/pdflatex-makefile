@@ -1,0 +1,15 @@
+((*- extends 'article.tplx' -*))
+% Disable input cells
+((* block input_group *))
+((* endblock input_group *))
+
+% Use a different title
+((* block title *))
+\title{Example Title Changed In Template}
+((* endblock title *))
+
+
+((* block author *))
+\author{Template Author}
+((* endblock author *))
+
