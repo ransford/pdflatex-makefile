@@ -36,6 +36,9 @@ export TARGET
 all: $(TEX)
 	$(MAKE) -f $(PDF_MAKE) all
 
+view: $(TEX)
+	$(MAKE) -f $(PDF_MAKE) view
+
 $(TEX): $(NOTEBOOK)
 	ipython nbconvert --to=latex --template=$(TEMPLATE) $(NOTEBOOK)
 
