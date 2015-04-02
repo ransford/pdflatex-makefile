@@ -23,12 +23,12 @@
 ###
 NOTEBOOK=$(TARGET).ipynb 
 TEX=$(TARGET).tex
-NBCONVERT_ARGS='--to=latex'
+NBCONVERT_ARGS = --to=latex
 ifneq ($(TEMPLATE),)
-NBCONVERT_ARGS+=' --template=$(TEMPLATE)'
+NBCONVERT_ARGS += --template=$(TEMPLATE)
 endif
 
-PDF_MAKE=Makefile.include
+PDF_MAKE ?= Makefile.include
 
 # The PDF make needs TARGET set as well
 export TARGET
@@ -40,7 +40,7 @@ view: $(TEX)
 	$(MAKE) -f $(PDF_MAKE) view
 
 $(TEX): $(NOTEBOOK)
-	ipython nbconvert --to=latex --template=$(TEMPLATE) $(NOTEBOOK)
+	ipython nbconvert $(NBCONVERT_ARGS) $(NOTEBOOK)
 
 clean: 
 	$(MAKE) -f $(PDF_MAKE) clean
