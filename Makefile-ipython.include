@@ -1,0 +1,55 @@
+### Requires the Makefile.include file from
+###   http://github.com/ransford/pdflatex-makefile
+###
+### generic GNU make Makefile for .ipynb -> .tex -> .pdf.
+### charles at charlesledoux.com
+###   https://github.com/cledoux/pdflatex-makefile
+###
+### Recommended usage:
+###   1. echo 'include Makefile-ipython.include' > Makefile
+###   2. Optional: Edit the Makefile to override $(TARGET)
+###      and anything else (e.g., PDFVIEWER, TEMPLATE, AFTERALL)
+###
+### Final result:
+###   % cat Makefile
+###   TARGET=mynotebook
+###   PDFVIEWER=open -a 'Adobe Acrobat Professional'
+###   TEMPLATE=notebook_template.tplx
+###   AFTERALL=mypostprocessingstep
+###   include Makefile-ipython.include
+###
+###   mypostprocessingstep:
+###           # do something...
+###
+NOTEBOOK=$(TARGET).ipynb 
+TEX=$(TARGET).tex
+NBCONVERT_ARGS = --to=latex
+ifneq ($(TEMPLATE),)
+NBCONVERT_ARGS += --template=$(TEMPLATE)
+endif
+
+PDF_MAKE ?= Makefile.include
+
+# The PDF make needs TARGET set as well
+export TARGET
+
+all: $(TEX)
+	$(MAKE) -f $(PDF_MAKE) all
+
+view: $(TEX)
+	$(MAKE) -f $(PDF_MAKE) view
+
+$(TEX): $(NOTEBOOK)
+	ipython nbconvert $(NBCONVERT_ARGS) $(NOTEBOOK)
+
+clean: 
+	$(MAKE) -f $(PDF_MAKE) clean
+	$(RM) -r $(TARGET)_files
+	$(RM) $(TEX)
+
+# Look for any rules not found here in the parent.
+# https://www.gnu.org/software/make/manual/html_node/Overriding-Makefiles.html
+# I removed the force part because this was causing it to attempt to run
+# commands Makefile and Makefile.include
+%: 
+	$(MAKE) -f $(PDF_MAKE) $@
