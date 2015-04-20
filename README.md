@@ -2,7 +2,7 @@
 
 If your main file is `mypaper.tex`:
 
-    $ curl -O https://raw.github.com/ransford/pdflatex-makefile/master/Makefile.include
+    $ curl -O https://raw.githubusercontent.com/ransford/pdflatex-makefile/master/Makefile.include
     $ cat > Makefile
     TARGET=mypaper
     include Makefile.include
