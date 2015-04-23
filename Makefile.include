@@ -153,7 +153,7 @@ clean:
 	$(RM) $(foreach T,$(TARGETS), \
 		$(T).out $(T).blg $(T).bbl \
 		$(T).lof $(T).lot $(T).toc $(T).idx \
-		$(T).nav $(T).snm $(T).vtc) \
+		$(T).nav $(T).snm $(T).vtc $(T).pag) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
 
