@@ -151,9 +151,14 @@ distclean: clean
 
 clean:
 	$(RM) $(foreach T,$(TARGETS), \
-		$(T).out $(T).blg $(T).bbl \
-		$(T).lof $(T).lot $(T).toc $(T).idx \
-		$(T).nav $(T).snm $(T).vtc $(T).pag) \
+		$(T).bbl $(T).bcf $(T).bit $(T).blg \
+		$(T)-blx.bib $(T).brf $(T).glo $(T).glx \
+		$(T).gxg $(T).gxs $(T).idx $(T).ilg \
+		$(T).ind $(T).loa $(T).lof $(T).lol \
+		$(T).lot $(T).maf $(T).mtc $(T).nav \
+		$(T).out $(T).pag $(T).run.xml $(T).snm \
+		$(T).svn $(T).tdo $(T).tns $(T).toc \
+		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
 
