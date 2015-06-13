@@ -78,7 +78,7 @@ ifeq ($(shell git status >/dev/null 2>&1 && echo USING_GIT),USING_GIT)
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --git-dir)/refs/remotes/git-svn)
   else
     # plain git
-    REVISION := $(shell git rev-parse --short HEAD)
+    REVISION := $(shell git describe --always HEAD)
     GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --git-dir)/$(GIT_BRANCH))
   endif
