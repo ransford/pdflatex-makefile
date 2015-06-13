@@ -21,6 +21,7 @@
 
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error
 BIBTEX		?= bibtex
+MAKEGLOSSARIES ?= makeglossaries
 
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
@@ -125,7 +126,18 @@ BIBDEPS = %.bbl
 	$(BIBTEX) $*
 endif
 
-$(PDFTARGETS): %.pdf: %.tex %.aux $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
+# introduce makeglossaries dependency if we found \printglossary/ies
+HAS_GLOSSARIES = $(shell \
+		grep '^[^%]*\\printglossar\(ies\|y\)' $(TEXTARGETS) $(INCLUDEDTEX) && \
+		echo HAS_GLOSSARIES)
+ifneq (HAS_GLOSSARIES,)
+GLSDEPS = %.gls
+%.gls: %.tex
+	$(PDFLATEX) -draftmode $* $(ERRFILTER)
+	$(MAKEGLOSSARIES) $(TARGETS)
+endif
+
+$(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
