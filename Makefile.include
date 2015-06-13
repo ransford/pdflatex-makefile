@@ -109,7 +109,7 @@ view: $(PDFTARGETS)
 ifneq ($(REVISION),)
 REVDEPS += revision.tex
 revision.tex: $(VCSTURD)
-	/bin/echo '\newcommand{\Revision}'"{$(REVISION)}" > $@
+	/bin/echo '\newcommand{\Revision}'"{$(subst _,\_,$(REVISION))}" > $@
 AUXFILES += revision.aux
 endif
 
