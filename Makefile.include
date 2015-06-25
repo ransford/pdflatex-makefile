@@ -130,7 +130,7 @@ endif
 HAS_GLOSSARIES = $(shell \
 		grep '^[^%]*\\printglossar\(ies\|y\)' $(TEXTARGETS) $(INCLUDEDTEX) && \
 		echo HAS_GLOSSARIES)
-ifneq (HAS_GLOSSARIES,)
+ifneq ($(HAS_GLOSSARIES),)
 GLSDEPS = %.gls
 %.gls: %.tex
 	$(PDFLATEX) -draftmode $* $(ERRFILTER)
