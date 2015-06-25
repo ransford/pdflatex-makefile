@@ -12,6 +12,11 @@
 
 \documentclass{article}
 
+% Generate the glossary and define terms
+\usepackage{glossaries}
+\makeglossaries
+\include{glossary_terms}
+
 \ifnum\draft=1
   % include the revision number in a footer
   \usepackage{draftfooter}
@@ -24,6 +29,10 @@
 % \input{introduction}
 \include{canoe}
 
+% Use glossary items
+\section{Time zones}
+\gls{utc} is 3 hours behind \gls{adt} and 10 hours ahead of \gls{est}.
+
 \section{Write me}
 \label{sec:write-me}
 Write me.~\cite{www:pdflatex-makefile}
@@ -31,4 +40,7 @@ Write me.~\cite{www:pdflatex-makefile}
 \bibliographystyle{abbrv}
 \bibliography{examplebib} % this comment will be ignored
 % \bibliography{commented}
+
+\printglossaries
+
 \end{document}
