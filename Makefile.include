@@ -132,8 +132,7 @@ HAS_GLOSSARIES = $(shell \
 		echo HAS_GLOSSARIES)
 ifneq ($(HAS_GLOSSARIES),)
 GLSDEPS = %.gls
-%.gls: %.tex
-	$(PDFLATEX) -draftmode $* $(ERRFILTER)
+%.gls: %.aux
 	$(MAKEGLOSSARIES) $(TARGETS)
 endif
 
