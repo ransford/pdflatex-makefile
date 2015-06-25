@@ -21,6 +21,7 @@
 
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error
 BIBTEX		?= bibtex
+MAKEGLOSSARIES ?= makeglossaries
 
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
@@ -125,7 +126,17 @@ BIBDEPS = %.bbl
 	$(BIBTEX) $*
 endif
 
-$(PDFTARGETS): %.pdf: %.tex %.aux $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
+# introduce makeglossaries dependency if we found \printglossary/ies
+HAS_GLOSSARIES = $(shell \
+		grep '^[^%]*\\printglossar\(ies\|y\)' $(TEXTARGETS) $(INCLUDEDTEX) && \
+		echo HAS_GLOSSARIES)
+ifneq ($(HAS_GLOSSARIES),)
+GLSDEPS = %.gls
+%.gls: %.aux
+	$(MAKEGLOSSARIES) $(TARGETS)
+endif
+
+$(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
@@ -152,13 +163,13 @@ distclean: clean
 clean:
 	$(RM) $(foreach T,$(TARGETS), \
 		$(T).bbl $(T).bcf $(T).bit $(T).blg \
-		$(T)-blx.bib $(T).brf $(T).glo $(T).glx \
-		$(T).gxg $(T).gxs $(T).idx $(T).ilg \
-		$(T).ind $(T).loa $(T).lof $(T).lol \
+		$(T)-blx.bib $(T).brf $(T).glg $(T).glo \
+		$(T).gls $(T).glsdefs $(T).glx \ $(T).gxg \
+		$(T).gxs $(T).idx $(T).ilg $(T).ind \
+		$(T).ist $(T).loa $(T).lof $(T).lol \
 		$(T).lot $(T).maf $(T).mtc $(T).nav \
 		$(T).out $(T).pag $(T).run.xml $(T).snm \
 		$(T).svn $(T).tdo $(T).tns $(T).toc \
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
-
