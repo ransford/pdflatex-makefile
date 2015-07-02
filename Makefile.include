@@ -7,6 +7,10 @@
 ###   1. echo 'include Makefile.include' > Makefile
 ###   2. Optional: Edit the Makefile to override $(TARGET)
 ###      and anything else (e.g., PDFVIEWER, AFTERALL)
+###   3. $ make snapshot
+###      # pass around a draft...
+###   4. $ make distill
+###      # submit the camera-ready version with embedded fonts
 ###
 ### Final result:
 ###   % cat Makefile
