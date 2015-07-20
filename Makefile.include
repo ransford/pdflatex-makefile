@@ -119,7 +119,6 @@ AUXFILES += revision.aux
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
-.INTERMEDIATE: $(AUXFILES)
 %.aux: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $* $(ERRFILTER)
 
