@@ -27,9 +27,17 @@ PDFLATEX	?= pdflatex -halt-on-error -file-line-error
 BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
 
+ifneq ($(OUTPUTDIR),)
+PDFLATEX	+= -output-directory $(OUTPUTDIR)
+OUTPUTDIR2	= $(OUTPUTDIR)/
+else
+OUTPUTDIR2	=
+OUTPUTDIR	=
+endif
+
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
-ERRFILTER	:= > /dev/null || (egrep ':[[:digit:]]+:' *.log && false)
+ERRFILTER	:= > /dev/null || (egrep -r ':[[:digit:]]+:' *.log && false)
 BIBTEX		+= -terse
 else
 PDFLATEX	+= -interaction=nonstopmode
@@ -57,17 +65,17 @@ LOGFILES   = $(TARGETS:=.log)
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
 BIBFILES = $(patsubst %,%.bib,\
-		$(shell grep '^[^%]*\\bibliography{' $(TEXTARGETS) | \
-			grep -o '\\bibliography{[^}]\+}' | \
-			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
+		$(shell grep -r '^[^%]*\\bibliography{' $(TEXTARGETS) | \
+			grep -r -o '\\bibliography{[^}]\+}' | \
+			sed -r -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies; ignore
 ## .tex extensions.
 INCLUDEDTEX = $(patsubst %,%.tex,\
-		$(shell grep '^[^%]*\\\(input\|include\){' $(TEXTARGETS) | \
-			grep -o '\\\(input\|include\){[^}]\+}' | \
-			sed -e 's/^.*{\([^}]*\)}.*/\1/' \
+		$(shell grep -r '^[^%]*\\\(input\|include\){' $(TEXTARGETS) | \
+			grep -r -o '\\\(input\|include\){[^}]\+}' | \
+			sed -r -e 's/^.*{\([^}]*\)}.*/\1/' \
 			    -e 's/\.tex$$//'))
 
 AUXFILES += $(INCLUDEDTEX:.tex=.aux)
@@ -114,8 +122,8 @@ view: $(PDFTARGETS)
 ifneq ($(REVISION),)
 REVDEPS += revision.tex
 revision.tex: $(VCSTURD)
-	/bin/echo '\newcommand{\Revision}'"{$(subst _,\_,$(REVISION))}" > $@
-AUXFILES += revision.aux
+	/bin/echo '\newcommand{\Revision}'"{$(subst _,\_,$(REVISION))}" > $(OUTPUTDIR2)$@
+AUXFILES += $(OUTPUTDIR2)revision.aux
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
@@ -131,7 +139,7 @@ endif
 
 # introduce makeglossaries dependency if we found \printglossary/ies
 HAS_GLOSSARIES = $(shell \
-		grep '^[^%]*\\printglossar\(ies\|y\)' $(TEXTARGETS) $(INCLUDEDTEX) && \
+		grep -r '^[^%]*\\printglossar\(ies\|y\)' $(TEXTARGETS) $(INCLUDEDTEX) && \
 		echo HAS_GLOSSARIES)
 ifneq ($(HAS_GLOSSARIES),)
 GLSDEPS = %.gls
@@ -142,15 +150,15 @@ endif
 $(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
-	@if egrep -q "undefined (references|citations)" $*.log; then \
+	@if egrep -q "undefined (references|citations)" $(OUTPUTDIR2)$*.log; then \
 		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
-	@while grep -q "Rerun to" $*.log; do \
+	@while grep -q "Rerun to" $(OUTPUTDIR2)$*.log; do \
 		$(PDFLATEX) $* $(ERRFILTER); done
 
 DRAFTS := $(PDFTARGETS:.pdf=-$(REVISION).pdf)
 $(DRAFTS): %-$(REVISION).pdf: %.pdf
-	cp $< $@
+	cp $(OUTPUTDIR2)$< $@
 snapshot: $(DRAFTS)
 
 %.distilled.pdf: %.pdf
@@ -175,4 +183,4 @@ clean:
 		$(T).svn $(T).tdo $(T).tns $(T).toc \
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
-		$(EXTRACLEAN)
+		$(EXTRACLEAN) $(OUTPUTDIR)/*
