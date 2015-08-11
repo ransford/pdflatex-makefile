@@ -56,7 +56,7 @@ LOGFILES   = $(TARGETS:=.log)
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
-BIBFILES = $(patsubst %,%.bib,\
+BIBFILES += $(patsubst %,%.bib,\
 		$(shell grep '^[^%]*\\bibliography{' $(TEXTARGETS) | \
 			grep -o '\\bibliography{[^}]\+}' | \
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
