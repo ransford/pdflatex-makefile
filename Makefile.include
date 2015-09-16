@@ -79,21 +79,29 @@ SPACE = $(empty) $(empty)
 ifeq ($(shell git status >/dev/null 2>&1 && echo USING_GIT),USING_GIT)
   ifeq ($(shell git svn info >/dev/null 2>&1 && echo USING_GIT_SVN),USING_GIT_SVN)
     # git-svn
-    REVISION := $(shell git svn find-rev git-svn)
+    ifeq ($(REVISION),)
+      REVISION := $(shell git svn find-rev git-svn)
+    endif
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --git-dir)/refs/remotes/git-svn)
   else
     # plain git
-    REVISION := $(shell git describe --always HEAD)
+    ifeq ($(REVISION),)
+      REVISION := $(shell git describe --always HEAD)
+    endif
     GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
     VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --git-dir)/$(GIT_BRANCH))
   endif
 else ifeq ($(shell hg root >/dev/null 2>&1 && echo USING_HG),USING_HG)
   # mercurial
-  REVISION := $(shell hg id -i)
+  ifeq ($(REVISION),)
+    REVISION := $(shell hg id -i)
+  endif
   VCSTURD := $(subst $(SPACE),\ ,$(shell hg root)/.hg/dirstate)
 else ifneq ($(wildcard .svn/entries),)
   # subversion
-  REVISION := $(subst :,-,$(shell svnversion -n))
+  ifeq ($(REVISION),)
+    REVISION := $(subst :,-,$(shell svnversion -n))
+  endif
   VCSTURD := .svn/entries
 endif
 
