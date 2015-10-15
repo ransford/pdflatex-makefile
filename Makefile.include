@@ -68,11 +68,16 @@ ifneq ($(BIBLATEX),)
 else
   BIBINCLUDE = bibliography
 endif
-BIBFILES += $(patsubst %,%.bib,\
-		$(shell grep "^[^%]*\\\\$(BIBINCLUDE){" $(TEXTARGETS) | \
+BIBSTEM += $(shell grep "^[^%]*\\\\$(BIBINCLUDE){" $(TEXTARGETS) | \
 			grep -o "\\\\$(BIBINCLUDE){[^}]\\+}" | \
 			sed -e "s/^[^%]*\\\\$(BIBINCLUDE){\\([^}]*\\)}.*/\\1/" \
-			    -e 's/, */ /g'))
+			    -e 's/, */ /g')
+
+ifneq ($(BIBLATEX),)
+  BIBFILES += $(BIBSTEM)
+else
+  BIBFILES += $(patsubst %,%.bib, $(BIBSTEM))
+endif
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies; ignore
 ## .tex extensions.
