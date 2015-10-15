@@ -118,7 +118,7 @@ else ifneq ($(wildcard .svn/entries),)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view snapshot distill distclean
+.PHONY: all clean pdf view snapshot distill distclean checkbib
 
 all: pdf $(AFTERALL)
 
@@ -196,3 +196,6 @@ clean:
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
+
+checkbib:
+	echo "$(BIBTEX) $(BIBFILES) $(BIBLATEX)"
