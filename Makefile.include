@@ -56,7 +56,7 @@ LOGFILES   = $(TARGETS:=.log)
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
-BIBLATEX = $(shell grep "^[^%]*\\\\usepackage\\(\\[[^\\]]\\]\\){biblatex}" $(TEXTARGETS))
+BIBLATEX = $(shell grep "^[^%]*\\\\usepackage\\(\\[.*\\]\\){biblatex}" $(TEXTARGETS))
 ifneq ($(BIBLATEX),)
   BIBINCLUDE = addbibresource
   BACKEND = $(shell grep -o 'backend=\([A-Za-z0-9]\+\)' $(TEXTARGETS) | sed -e 's/^.*=//')
