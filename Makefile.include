@@ -56,7 +56,7 @@ LOGFILES   = $(TARGETS:=.log)
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
-BIBLATEX = $(shell grep "^[^%]*\\\\usepackage\\(\\[[^\\]]\\]\\){biblatex}" $(TEXTARGETS))
+BIBLATEX = $(shell grep "^[^%]*\\\\usepackage\\(\\[.*\\]\\){biblatex}" $(TEXTARGETS))
 ifneq ($(BIBLATEX),)
   BIBINCLUDE = addbibresource
   BACKEND = $(shell grep -o 'backend=\([A-Za-z0-9]\+\)' $(TEXTARGETS) | sed -e 's/^.*=//')
@@ -68,11 +68,16 @@ ifneq ($(BIBLATEX),)
 else
   BIBINCLUDE = bibliography
 endif
-BIBFILES += $(patsubst %,%.bib,\
-		$(shell grep "^[^%]*\\\\$(BIBINCLUDE){" $(TEXTARGETS) | \
+BIBSTEM += $(shell grep "^[^%]*\\\\$(BIBINCLUDE){" $(TEXTARGETS) | \
 			grep -o "\\\\$(BIBINCLUDE){[^}]\\+}" | \
 			sed -e "s/^[^%]*\\\\$(BIBINCLUDE){\\([^}]*\\)}.*/\\1/" \
-			    -e 's/, */ /g'))
+			    -e 's/, */ /g')
+
+ifneq ($(BIBLATEX),)
+  BIBFILES += $(BIBSTEM)
+else
+  BIBFILES += $(patsubst %,%.bib, $(BIBSTEM))
+endif
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies; ignore
 ## .tex extensions.
@@ -118,7 +123,7 @@ else ifneq ($(wildcard .svn/entries),)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view snapshot distill distclean
+.PHONY: all clean pdf view snapshot distill distclean checkbib
 
 all: pdf $(AFTERALL)
 
@@ -196,3 +201,6 @@ clean:
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
 		$(EXTRACLEAN)
+
+checkbib:
+	echo "$(BIBTEX) $(BIBFILES) $(BIBLATEX)"
