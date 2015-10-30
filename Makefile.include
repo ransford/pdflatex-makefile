@@ -102,7 +102,7 @@ else ifeq ($(shell svn info >/dev/null && echo USING_SVN),USING_SVN)
   ifeq ($(REVISION),)
     REVISION := $(subst :,-,$(shell svnversion -n))
   endif
-  VCSTRUD := $(addsuffix /.svn/entries, $(shell svn info | grep 'Root Path' | sed -e 's/\(.*\:\)\(.*\) /\2/'))
+  VCSTURD := $(addsuffix /.svn/entries, $(shell svn info | grep 'Root Path' | sed -e 's/\(.*\:\)\(.*\) /\2/'))
 endif
 
 # .PHONY names all targets that aren't filenames
