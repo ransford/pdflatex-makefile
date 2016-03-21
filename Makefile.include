@@ -28,7 +28,7 @@ BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
 
 ## String to find in log to check whether rerun is necessary
-RERUNSTR = Rerun to
+RERUN_PATTERN = Rerun to
 
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
@@ -156,7 +156,7 @@ ifneq ($(strip $(BIBFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
 		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
-	@while grep -q "$(RERUNSTR)" $*.log; do \
+	@while grep -q "$(RERUN_PATTERN)" $*.log; do \
 		$(PDFLATEX) $* $(ERRFILTER); done
 
 DRAFTS := $(PDFTARGETS:.pdf=-$(REVISION).pdf)
