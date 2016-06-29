@@ -25,3 +25,8 @@ Features:
 * Distills a camera-ready PDF (with fonts embedded): `make distill`
 * To generate a draft with the revision number in its filename (to pass
   around), use `make snapshot`.
+
+# License
+
+This project is free software licensed under the terms of the [Apache 2.0
+license](http://www.apache.org/licenses/LICENSE-2.0).
