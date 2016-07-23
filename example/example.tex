@@ -8,9 +8,11 @@
 %% Also demonstrates the inclusion of revision.tex via the draftfooter package.
 %%
 
+
 \newcount\draft\draft=1 % set to 0 for "publication"
 
 \documentclass{article}
+\usepackage{graphicx}
 
 % Generate the glossary and define terms
 \usepackage{glossaries}
@@ -25,6 +27,12 @@
 \begin{document}
 
 \input{abstract.tex} % this comment will be ignored, as will the .tex extension
+
+\begin{figure}[!ht]
+  \caption{An SVG picture}
+  \centering
+    \includegraphics[width=0.5\textwidth]{img/svg.pdf}
+\end{figure}
 
 % \input{introduction}
 \include{canoe}

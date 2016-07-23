@@ -23,7 +23,7 @@
 ###           # do something...
 ###
 
-PDFLATEX	?= pdflatex -halt-on-error -file-line-error
+PDFLATEX	?= pdflatex -halt-on-error -file-line-error -shell-escape
 BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
 
@@ -54,6 +54,11 @@ TEXTARGETS = $(TARGETS:=.tex)
 PDFTARGETS = $(TARGETS:=.pdf)
 AUXFILES   = $(TARGETS:=.aux)
 LOGFILES   = $(TARGETS:=.log)
+
+## Inkscape SVG file processing:
+INKSCAPE ?= inkscape
+SVGFILES  = $(wildcard img/*.svg fig/*.svg)
+PDFFILES := $(SVGFILES:.svg=.pdf)
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
@@ -113,7 +118,10 @@ endif
 
 all: pdf $(AFTERALL)
 
-pdf: $(PDFTARGETS)
+$(PDFFILES): $(SVGFILES)
+	$(INKSCAPE) --without-gui --export-pdf="$@" "$(patsubst %.pdf,%.svg,$@)" 2> /dev/null
+
+pdf: $(PDFFILES) $(PDFTARGETS)
 
 view: $(PDFTARGETS)
 	$(PDFVIEWER) $(PDFTARGETS)
@@ -186,4 +194,4 @@ clean:
 		$(T).svn $(T).tdo $(T).tns $(T).toc \
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
-		$(EXTRACLEAN)
+		$(EXTRACLEAN) $(PDFFILES)
