@@ -57,8 +57,8 @@ LOGFILES   = $(TARGETS:=.log)
 
 ## Inkscape SVG file processing:
 INKSCAPE ?= inkscape
-SVGFILES  = $(wildcard img/*.svg fig/*.svg)
-PDFFILES := $(SVGFILES:.svg=.pdf)
+FIG_SVG=$(wildcard $(FIGS)/*.svg)
+FIG_PDF=$(FIG_SVG:.svg=.pdf)
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
@@ -118,10 +118,11 @@ endif
 
 all: pdf $(AFTERALL)
 
-$(PDFFILES): $(SVGFILES)
-	$(INKSCAPE) --without-gui --export-pdf="$@" "$(patsubst %.pdf,%.svg,$@)" 2> /dev/null
+$(FIGS)/%.pdf: $(FIGS)/%.svg  ## Figures for the manuscript
+	inkscape -C -z --file=$< --export-pdf=$@ 2> /dev/null
 
-pdf: $(PDFFILES) $(PDFTARGETS)
+pdf: $(FIG_PDF) $(PDFTARGETS)
+
 
 view: $(PDFTARGETS)
 	$(PDFVIEWER) $(PDFTARGETS)
@@ -194,4 +195,4 @@ clean:
 		$(T).svn $(T).tdo $(T).tns $(T).toc \
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
-		$(EXTRACLEAN) $(PDFFILES)
+		$(EXTRACLEAN) $(FIG_PDF)
