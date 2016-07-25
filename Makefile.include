@@ -23,7 +23,7 @@
 ###           # do something...
 ###
 
-PDFLATEX	?= pdflatex -halt-on-error -file-line-error
+PDFLATEX	?= pdflatex -halt-on-error -file-line-error -shell-escape
 BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
 
@@ -54,6 +54,14 @@ TEXTARGETS = $(TARGETS:=.tex)
 PDFTARGETS = $(TARGETS:=.pdf)
 AUXFILES   = $(TARGETS:=.aux)
 LOGFILES   = $(TARGETS:=.log)
+
+## Inkscape SVG file processing:
+ifeq ($(shell which inkscape >/dev/null 2>&1 && echo USING_INKSCAPE),USING_INKSCAPE)
+  FIG_SVG=$(wildcard $(FIGS)/*.svg)
+  FIG_PDF=$(FIG_SVG:.svg=.pdf)
+else
+  FIG_PDF=
+endif
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
 ## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
@@ -113,7 +121,13 @@ endif
 
 all: pdf $(AFTERALL)
 
-pdf: $(PDFTARGETS)
+ifeq ($(shell which inkscape >/dev/null 2>&1 && echo USING_INKSCAPE),USING_INKSCAPE)
+$(FIGS)/%.pdf: $(FIGS)/%.svg  ## Figures for the manuscript
+	inkscape -C -z --file=$< --export-pdf=$@ 2> /dev/null
+endif
+
+pdf: $(FIG_PDF) $(PDFTARGETS)
+
 
 view: $(PDFTARGETS)
 	$(PDFVIEWER) $(PDFTARGETS)
@@ -186,4 +200,4 @@ clean:
 		$(T).svn $(T).tdo $(T).tns $(T).toc \
 		$(T).vtc $(T).url) \
 		$(REVDEPS) $(AUXFILES) $(LOGFILES) \
-		$(EXTRACLEAN)
+		$(EXTRACLEAN) $(FIG_PDF)
