@@ -26,7 +26,7 @@ Features:
 * Distills a camera-ready PDF (with fonts embedded): `make distill`
 * To generate a draft with the revision number in its filename (to pass
   around), use `make snapshot`.
-* Generate PDFs in the folder FIGS (e.g.  _img_ or _fig_) from SVGs by using inkscape
+* Generate PDFs in the folder `$(FIGS)` (e.g.,  _img/_) from SVGs with Inkscape
 
 # License
 
