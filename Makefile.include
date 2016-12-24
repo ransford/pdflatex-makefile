@@ -147,6 +147,12 @@ endif
 %.aux: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $* $(ERRFILTER)
 
+# specify KEEPAUX=1 if you need to keep auxiliary (.aux) files for some other
+# tool (e.g., an autocompleting text editor)
+ifneq ($(KEEPAUX),1)
+  .INTERMEDIATE: $(AUXFILES)
+endif
+
 # introduce BibTeX dependency if we found a \bibliography
 ifneq ($(strip $(BIBFILES)),)
 BIBDEPS = %.bbl
