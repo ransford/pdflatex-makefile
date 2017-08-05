@@ -26,6 +26,7 @@
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error -shell-escape
 BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
+MAKENOMENCL ?= makeindex
 
 ## String to find in log to check whether rerun is necessary
 RERUN_PATTERN = Rerun to
@@ -170,7 +171,17 @@ GLSDEPS = %.gls
 	$(MAKEGLOSSARIES) $(TARGETS)
 endif
 
-$(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS)
+# introduce makenomenclature dependency if we found \printnomenclature
+HAS_NOMENCL = $(shell \
+		grep '^[^%]*\\printnomenclature' $(TEXTARGETS) $(INCLUDEDTEX) && \
+		echo HAS_NOMENCL)
+ifneq ($(HAS_NOMENCL),)
+NLSDEPS = %.nls
+%.nls: %.nlo
+	$(MAKENOMENCL) $(TARGETS).nlo -s nomencl.ist -o $(TARGETS).nls
+endif
+
+$(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS) $(NLSDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
 ifneq ($(strip $(BIBFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
