@@ -25,16 +25,18 @@
 
 PDFLATEX	?= pdflatex -halt-on-error -file-line-error -shell-escape
 BIBTEX		?= bibtex
+BIBER		?= biber
 MAKEGLOSSARIES ?= makeglossaries
 MAKENOMENCL ?= makeindex
 
 ## String to find in log to check whether rerun is necessary
-RERUN_PATTERN = Rerun to
+RERUN_PATTERN = Rerun to|rerun LaTeX|run LaTeX again
 
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
 ERRFILTER	:= > /dev/null || (egrep ':[[:digit:]]+:' *.log && false)
 BIBTEX		+= -terse
+BIBER		+= --quiet
 else
 PDFLATEX	+= -interaction=nonstopmode
 ERRFILTER=
@@ -65,14 +67,23 @@ else
 endif
 
 ## If $(TARGET).tex refers to .bib files like \bibliography{foo,bar}, then
-## $(BIBFILES) will contain foo.bib and bar.bib, and both files will be added as
+## $(BIBTEXFILES) will contain foo.bib and bar.bib, and both files will be added as
 ## dependencies to $(PDFTARGETS).
 ## Effect: updating a .bib file will trigger re-typesetting.
-BIBFILES += $(patsubst %,%.bib,\
+BIBTEXFILES += $(patsubst %,%.bib,\
 		$(shell grep '^[^%]*\\bibliography{' $(TEXTARGETS) | \
 			grep -o '\\bibliography{[^}]\+}' | \
 			sed -e 's/^[^%]*\\bibliography{\([^}]*\)}.*/\1/' \
 			    -e 's/, */ /g'))
+
+## If $(TARGET).tex refers to .bib files like \addbibresource{foo.bib}, then
+## $(BIBLATEXFILES) will contain foo.bib and  will be added as dependencies to $(PDFTARGETS).
+## Effect: updating a .bib file will trigger re-typesetting.
+BIBLATEXFILES += $(shell \
+			grep '^[^%]*\\addbibresource{' $(TEXTARGETS) | \
+			grep -o '\\addbibresource{[^}]\+}' | \
+			sed -e 's/^[^%]*\\addbibresource{\([^}]*\)}.*/\1/' \
+			    -e 's/, */ /g')
 
 ## Add \input'ed or \include'd files to $(PDFTARGETS) dependencies; ignore
 ## .tex extensions.
@@ -145,7 +156,7 @@ AUXFILES += revision.aux
 endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
-%.aux: %.tex $(REVDEPS)
+%.aux %.bcf: %.tex $(REVDEPS)
 	$(PDFLATEX) -draftmode $* $(ERRFILTER)
 
 # specify KEEPAUX=1 if you need to keep auxiliary (.aux) files for some other
@@ -155,10 +166,17 @@ ifneq ($(KEEPAUX),1)
 endif
 
 # introduce BibTeX dependency if we found a \bibliography
-ifneq ($(strip $(BIBFILES)),)
+ifneq ($(strip $(BIBTEXFILES)),)
 BIBDEPS = %.bbl
-%.bbl: %.aux $(BIBFILES)
+%.bbl: %.aux $(BIBTEXFILES)
 	$(BIBTEX) $*
+endif
+
+# introduce BibLaTeX/Biber dependency if we found a \addbibresource
+ifneq ($(strip $(BIBLATEXFILES)),)
+BIBDEPS = %.bbl
+%.bbl: %.aux %.bcf $(BIBLATEXFILES)
+	$(BIBER) $*
 endif
 
 # introduce makeglossaries dependency if we found \printglossary/ies
@@ -183,11 +201,15 @@ endif
 
 $(PDFTARGETS): %.pdf: %.tex %.aux $(GLSDEPS) $(BIBDEPS) $(INCLUDEDTEX) $(REVDEPS) $(NLSDEPS)
 	$(PDFLATEX) $* $(ERRFILTER)
-ifneq ($(strip $(BIBFILES)),)
+ifneq ($(strip $(BIBTEXFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
 		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
-	@while grep -q "$(RERUN_PATTERN)" $*.log; do \
+ifneq ($(strip $(BIBLATEXFILES)),)
+	@if egrep -q "Please \(re\)run Biber on the file:" $*.log; then \
+		$(BIBER) $*; fi
+endif
+	@while egrep -q "$(RERUN_PATTERN)" $*.log; do \
 		$(PDFLATEX) $* $(ERRFILTER); done
 
 DRAFTS := $(PDFTARGETS:.pdf=-$(REVISION).pdf)
