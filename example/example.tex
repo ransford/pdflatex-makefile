@@ -14,6 +14,10 @@
 \documentclass{article}
 \usepackage{graphicx}
 
+% see examples of different styles e.g. on https://www.overleaf.com/learn/latex/Biblatex_bibliography_styles
+\usepackage[style=numeric,backref=true]{biblatex}
+\addbibresource{examplebib.bib}
+
 % Generate the glossary and define terms
 \usepackage{glossaries}
 \makeglossaries
@@ -45,9 +49,7 @@
 \label{sec:write-me}
 Write me.~\cite{www:pdflatex-makefile}
 
-\bibliographystyle{abbrv}
-\bibliography{examplebib} % this comment will be ignored
-% \bibliography{commented}
+\printbibliography[title=Sources] % this comment will be ignored
 
 \printglossaries
 
