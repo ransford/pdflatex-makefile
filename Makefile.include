@@ -37,6 +37,8 @@ PDFLATEX	+= -interaction=batchmode
 ERRFILTER	:= > /dev/null || (egrep ':[[:digit:]]+:' *.log && false)
 BIBTEX		+= -terse
 BIBER		+= --quiet
+MAKEGLOSSARIES += -q
+MAKENOMENCL += -q
 else
 PDFLATEX	+= -interaction=nonstopmode
 ERRFILTER=
