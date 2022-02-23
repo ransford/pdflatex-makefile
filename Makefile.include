@@ -221,7 +221,7 @@ snapshot: $(DRAFTS)
 
 %.distilled.pdf: %.pdf
 	gs -q -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$@ \
-		-dCompatibilityLevel=1.5 -dPDFSETTINGS=/prepress -c .setpdfwrite -f $<
+		-dCompatibilityLevel=1.5 -dPDFSETTINGS=/prepress $<
 	exiftool -overwrite_original -Title="" -Creator="" -CreatorTool="" $@
 
 distill: $(PDFTARGETS:.pdf=.distilled.pdf)
