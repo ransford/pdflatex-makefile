@@ -114,7 +114,8 @@ ifeq ($(shell git status >/dev/null 2>&1 && echo USING_GIT),USING_GIT)
       REVISION := $(shell git describe --always HEAD)
     endif
     GIT_BRANCH := $(shell git symbolic-ref HEAD 2>/dev/null)
-    VCSTURD := $(subst $(SPACE),\ ,$(shell git rev-parse --git-dir)/$(GIT_BRANCH))
+    GIT_BRANCH_REF := $(shell git rev-parse --git-dir)/$(GIT_BRANCH)
+    VCSTURD := $(subst $(SPACE),\ ,$(if $(wildcard $(GIT_BRANCH_REF)),$(GIT_BRANCH_REF),$(shell git rev-parse --git-dir)/packed-refs))
   endif
 else ifeq ($(shell hg root >/dev/null 2>&1 && echo USING_HG),USING_HG)
   # mercurial
